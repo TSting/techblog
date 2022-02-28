@@ -1,4 +1,4 @@
-baseURL = 'https://www.thefever.dev/'
+baseURL = 'http://tsting.github.io/techblog/'
 languageCode = 'en-us'
 title = 'thefever.dev'
 theme = 'etch'

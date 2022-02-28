@@ -1,4 +1,4 @@
-# thefever.xyz
+# [thefever.dev](https://thefever.dev)
 
 
 

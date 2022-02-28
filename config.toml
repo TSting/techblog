@@ -2,3 +2,7 @@ baseURL = 'http://example.org/'
 languageCode = 'en-us'
 title = 'thefever.dev'
 theme = 'etch'
+
+[taxonomies]
+  tag = "tags"
+  author = "authors"

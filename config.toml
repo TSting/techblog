@@ -1,4 +1,4 @@
-baseURL = 'http://thefever.dev/'
+baseURL = 'https://www.thefever.dev/'
 languageCode = 'en-us'
 title = 'thefever.dev'
 theme = 'etch'

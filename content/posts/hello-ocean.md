@@ -1,7 +1,7 @@
 ---
 title: "Hello Ocean"
 date: 2022-02-28T10:05:40+01:00
-draft: true
+draft: false
 author: kaykreuning
 tags: [ "meta" ]
 ---

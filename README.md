@@ -1,8 +1,18 @@
-# Tech Blog
+# thefever.xyz
 
 
 
 ## Creating a new blog post
+
+### TL;DR
+
+1. Run `hugo new posts/my-post.md`
+2. Update metadata and write post in `posts/my-post.md`
+3. Run `git add posts/my-post.md`
+4. Run `git commit -m "Add my-post."`
+5. Run `git push`
+
+
 
 ### 1. Add yourself as an author (only once)
 
@@ -29,7 +39,16 @@ is added to the metadata block of your post.
 
 
 
-### 3. Preview your post locally (optional)
+### 3. Write your post
+
+Posts are written in [Markdown](https://www.markdownguide.org/cheat-sheet/), it
+is possible, through the power of our generator, to write posts in HTML or some
+other formats check [here](https://gohugo.io/content-management/) for supported
+formats.
+
+
+
+### 4. Preview your post locally (optional)
 
 To run Hugo with drafts enabled, run the following command:
 
@@ -42,7 +61,7 @@ server with the blog locally.
 
 Visit [http://localhost:1313](http://localhost:1313) to preview your changes.
 
-### 4. Publish
+### 5. Publish
 
 When you are satisfied with your post, deploying is done like this:
 
@@ -54,7 +73,7 @@ A Github Action will take care of generating and actually deploying the changes
 for real. Check [https://thefever.dev](http://thefever.dev) to ensure that your
 post is showing up.
 
-### 5. Celebrate
+### 6. Celebrate
 
 You have just made a contribution to the world's collective knowledge. Not only
 is writing a good skill to hone in general, but your peers and your future self

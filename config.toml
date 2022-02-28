@@ -1,4 +1,4 @@
-baseURL = 'http://example.org/'
+baseURL = 'http://thefever.dev/'
 languageCode = 'en-us'
 title = 'thefever.dev'
 theme = 'etch'

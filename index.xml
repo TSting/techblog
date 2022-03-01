@@ -1,4 +1,145 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>thefever.dev</title><link>https://www.thefever.dev/</link><description>Recent content on thefever.dev</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 28 Feb 2022 10:05:40 +0100</lastBuildDate><atom:link href="https://www.thefever.dev/index.xml" rel="self" type="application/rss+xml"/><item><title>Hello Ocean</title><link>https://www.thefever.dev/posts/hello-ocean/</link><pubDate>Mon, 28 Feb 2022 10:05:40 +0100</pubDate><guid>https://www.thefever.dev/posts/hello-ocean/</guid><description>&lt;p>Obligatory first post.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>thefever.dev</title><link>https://www.thefever.dev/</link><description>Recent content on thefever.dev</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 01 Mar 2022 09:48:22 +0100</lastBuildDate><atom:link href="https://www.thefever.dev/index.xml" rel="self" type="application/rss+xml"/><item><title>Newspeak and Domain Modeling</title><link>https://www.thefever.dev/posts/newspeak-and-domain-modeling/</link><pubDate>Tue, 01 Mar 2022 09:48:22 +0100</pubDate><guid>https://www.thefever.dev/posts/newspeak-and-domain-modeling/</guid><description>&lt;p>&lt;em>this article was first published at &lt;a href="https://www.kkreuning.nl">www.kkreuning.nl&lt;/a>&lt;/em>&lt;/p>
+&lt;p>Newspeak is a fictional language spoken by the people of Oceania in George Orwell&amp;rsquo;s novel Nineteen Eighty-Four.&lt;/p>
+&lt;blockquote>
+&lt;p>“‘Don’t you see that the whole aim of Newspeak is to narrow the range of thought? In the end we shall make thoughtcrime literally impossible, because there will be no words in which to express it.’”&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>Syme, from &amp;ldquo;Nineteen Eighty-Four&amp;rdquo; by George Orwell&lt;/li>
+&lt;/ul>
+&lt;p>Newspeak sucks for the people of Oceania but we developers can learn a thing or two from Ingsoc.&lt;/p>
+&lt;h2 id="what-about-domain-primitives">What about domain primitives&lt;/h2>
+&lt;p>As an illustration let us come up with a simple example method signature in Java:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>String &lt;span style="color:#a6e22e">foo&lt;/span>&lt;span style="color:#f92672">(&lt;/span>String str&lt;span style="color:#f92672">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>What does this code do? The signature only tells us it’s a method from &lt;code>String&lt;/code> to &lt;code>String&lt;/code> so clearly it does something with the input string, or it might not be able to do something and return &lt;code>null&lt;/code>, or mutate some state, or perform other side effects, or throw a &lt;code>Throwable&lt;/code> (this is Java after all).&lt;/p>
+&lt;p>Now let us take a look at an equivalent signature, in Scala this time:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-scala" data-lang="scala">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">sealed&lt;/span> &lt;span style="color:#66d9ef">trait&lt;/span> &lt;span style="color:#a6e22e">PostalCode&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Zipcode&lt;/span>&lt;span style="color:#f92672">(&lt;/span>i&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Int&lt;/span>&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#66d9ef">extends&lt;/span> &lt;span style="color:#a6e22e">PostalCode&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Postleitzahl&lt;/span>&lt;span style="color:#f92672">(&lt;/span>i&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Int&lt;/span>&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#66d9ef">extends&lt;/span> &lt;span style="color:#a6e22e">PostalCode&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">def&lt;/span> foo&lt;span style="color:#f92672">(&lt;/span>str&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">)&lt;/span>&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Option&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">PostalCode&lt;/span>&lt;span style="color:#f92672">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Better, this code turns a &lt;code>String&lt;/code> into one of two possible &lt;code>PostalCodes&lt;/code> (either US or German) or fails to do so, returning a &lt;code>None&lt;/code>. An estimated guess would be that this function tries to create a valid postal code from a string. We just had to specify our domain with a few types and now the intent of this piece of code is clear.&lt;/p>
+&lt;p>Borrowing a term from Domain Driven Design, we call domain stuff as a dedicated to construct a &lt;strong>domain primitive&lt;/strong>. In the way that a language primitive (&lt;code>String&lt;/code>, &lt;code>boolean&lt;/code>, &lt;code>int&lt;/code>, &lt;code>float&lt;/code>, etc.) is a building block of programming code, a domain primitive is a building block for the domain model and business logic (&lt;code>ShoppingBag&lt;/code>, &lt;code>Order&lt;/code>, &lt;code>Quantity&lt;/code>, etc. if you’re in e-commerce for example).&lt;/p>
+&lt;p>A domain primitive is precise in its definition and impossible to be illegal, its existence implies its validity.&lt;/p>
+&lt;p>The true power of modeling in this way is revealed when using these domain primitives in the actual business logic:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-scala" data-lang="scala">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">def&lt;/span> x&lt;span style="color:#f92672">(&lt;/span>p&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">PostalCode&lt;/span>&lt;span style="color:#f92672">,&lt;/span> n&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">HouseNumber&lt;/span>&lt;span style="color:#f92672">)&lt;/span>&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Future&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">Option&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">Address&lt;/span>&lt;span style="color:#f92672">]]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Looking at types, there is only one thing this code could be doing: asynchronously returning an address or no result based on a postal code and a house number. This functional will work with any &lt;code>PostalCode&lt;/code> so we can infer that both US and German addresses are supported per our domain.
+Good luck figuring all of that out from the following signature:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>CompletionStage&lt;span style="color:#f92672">&amp;lt;&lt;/span>String&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">x&lt;/span>&lt;span style="color:#f92672">(&lt;/span>String s&lt;span style="color:#f92672">,&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> i&lt;span style="color:#f92672">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Lets see if proper naming might help:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>CompletionStage&lt;span style="color:#f92672">&amp;lt;&lt;/span>String&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">lookupAddress&lt;/span>&lt;span style="color:#f92672">(&lt;/span>String postalCode&lt;span style="color:#f92672">,&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> houseNumber&lt;span style="color:#f92672">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We are still not sure what valid a postal code even is (US, German, French, etc.) and the house number can still be zero or negative. Also what happens when non-sensical parameters are passed? Do we return &lt;code>null&lt;/code> or let the &lt;code>CompletionStage&lt;/code> fail? Both are not ideal.&lt;/p>
+&lt;h2 id="language-primitives-and-bomb-disposal">Language primitives and bomb disposal&lt;/h2>
+&lt;p>Let us investigate the potential problems of using language primitives in domain logic with another example, in which we model a method to transfer money from one account to another account:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">boolean&lt;/span> &lt;span style="color:#a6e22e">transfer&lt;/span>&lt;span style="color:#f92672">(&lt;/span>String fromAccountNumber&lt;span style="color:#f92672">,&lt;/span> String toAccountNumber&lt;span style="color:#f92672">,&lt;/span> BigDecimal amount&lt;span style="color:#f92672">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Now let’s count the ways in which this method can be called incorrectly:&lt;/p>
+&lt;ol>
+&lt;li>any argument could be &lt;code>null&lt;/code>.&lt;/li>
+&lt;li>&lt;code>amount&lt;/code> can be zero, which doesn’t make sense when transferring money.&lt;/li>
+&lt;li>&lt;code>amount&lt;/code> can be negative, which also doesn’t make sense.&lt;/li>
+&lt;li>&lt;code>fromAccountNumber&lt;/code> or &lt;code>toAccountNumber&lt;/code> might not be actual account numbers.&lt;/li>
+&lt;li>&lt;code>fromAccountNumber&lt;/code> and &lt;code>toAccountNumber&lt;/code> can be the same account number, which again doesn’t make sense.&lt;/li>
+&lt;li>&lt;code>fromAccountNumber&lt;/code> and &lt;code>toAccountNumber&lt;/code> can be mixed up, transferring money in the wrong direction.&lt;/li>
+&lt;/ol>
+&lt;p>That’s 9 potential mistakes for this one method and the compiler won’t help us with any of them, it comes down to human disciple and diligence to do the right thing.&lt;/p>
+&lt;blockquote>
+&lt;p>Issues 1, 2, 3, 4, and 5 can be caught if we add the proper checks ourselves, that way this method will just blow up at runtime, which is unfortunate but whatever. Issue 6 however cannot be checked at all. If the caller mixes up the two account numbers we won’t find out until angry customers start calling!&lt;/p>
+&lt;/blockquote>
+&lt;h1 id="type-aliases">Type aliases&lt;/h1>
+&lt;p>In contrast, consider the following Scala code using the excellent &lt;a href="https://github.com/estatico/scala-newtype">scala-newtype&lt;/a> library:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-scala" data-lang="scala">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@newtype&lt;/span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">FromAccount&lt;/span>&lt;span style="color:#f92672">(&lt;/span>a&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Account&lt;/span>&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@newtype&lt;/span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">ToAccount&lt;/span>&lt;span style="color:#f92672">(&lt;/span>a&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Account&lt;/span>&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">def&lt;/span> transfer&lt;span style="color:#f92672">(&lt;/span>from&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">FromAccount&lt;/span>&lt;span style="color:#f92672">,&lt;/span> to&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">ToAccount&lt;/span>&lt;span style="color:#f92672">,&lt;/span> amount&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Money&lt;/span>&lt;span style="color:#f92672">)&lt;/span>&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Boolean&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We added extra type information, like before, and now if the caller mixes up the arguments our code won’t compile. We moved all the way up the defect hierarchy, nice!&lt;/p>
+&lt;blockquote>
+&lt;p>It is still possible to mix up &lt;code>FromAccount&lt;/code> and &lt;code>ToAccount&lt;/code> in the example above, but at least that will be more obvious now.
+We won’t go into it deeper but if we &lt;em>really&lt;/em> want to constrain the code all the way up to 11, we can use something like &lt;a href="https://www.archunit.org">ArchUnit&lt;/a> to enforce that a &lt;code>FromAccount&lt;/code> can only be derived from the logged in user, ensuring its impossible to create otherwise.&lt;/p>
+&lt;/blockquote>
+&lt;p>The code above is more verbose but who cares? The code is type safe and its intent is more explicit.&lt;/p>
+&lt;p>A lot of modern, high level languages support some notion of type aliasing and/or newtypes:&lt;/p>
+&lt;ul>
+&lt;li>Scala 2 (as mentioned) has &lt;a href="https://github.com/estatico/scala-newtype">scala-newtype&lt;/a>&lt;/li>
+&lt;li>Scala 3 has &lt;a href="http://dotty.epfl.ch/docs/reference/other-new-features/opaques.html">Opaque Type Aliases&lt;/a>&lt;/li>
+&lt;li>Haxe supports &lt;a href="https://haxe.org/blog/abstracting-primitives/">Abstracting Primitives&lt;/a>&lt;/li>
+&lt;li>Haskell has &lt;a href="https://wiki.haskell.org/Newtype">newtype&lt;/a> built in&lt;/li>
+&lt;li>Kotlin has &lt;a href="https://kotlinlang.org/docs/type-aliases.html">Type aliases&lt;/a>&lt;/li>
+&lt;li>Swift supports &lt;a href="https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#grammar_typealias-declaration">Type Alias Declaration&lt;/a>&lt;/li>
+&lt;li>OCaml has &lt;a href="https://ocaml.org/learn/tutorials/data_types_and_matching.html">Custom Data Types&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>Java has&amp;hellip; nothing, so we must create wrappers ourselves.&lt;/p>
+&lt;blockquote>
+&lt;p>Wrapping in any language as opposed to type aliasing can have an impact on performance because we are basically boxing and unboxing the inner value of the domain primitive. Still the trade-off between performance and type safety is definitely worth it.&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="how-to-spot-weak-models">How to spot weak models&lt;/h2>
+&lt;p>In your current project right now, how many calls to &lt;code>require&lt;/code> and &lt;code>assert&lt;/code> and their relatives can you count? All of them are like booby traps in the code base and when a caller trips up they will explode all over the runtime.&lt;/p>
+&lt;p>Here is an incomplete list of things to watch for that might need some bomb disposal:&lt;/p>
+&lt;ul>
+&lt;li>checking for &lt;code>null&lt;/code>s, absence should be modeled with an &lt;code>Option&lt;/code> type.&lt;/li>
+&lt;li>functions with two or more arguments of the same type (unless your function is &lt;a href="https://en.m.wikipedia.org/wiki/Commutative_property">commutative&lt;/a>).&lt;/li>
+&lt;li>using a &lt;code>List&lt;/code> where a &lt;code>Set&lt;/code> or &lt;code>OrderedSet&lt;/code> is more appropriate, which is almost always. Even if you don’t care, a &lt;code>Set&lt;/code> communicates intent better.&lt;/li>
+&lt;li>language primitives as method inputs for business logic.&lt;/li>
+&lt;li>&lt;code>UUID&lt;/code>s as method argument, a customer uuid is not the same as an order uuid.&lt;/li>
+&lt;li>using a &lt;code>List&lt;/code> instead of a &lt;code>NonEmptyList&lt;/code> when at least one element is expected.&lt;/li>
+&lt;/ul>
+&lt;h2 id="dealing-with-garbage">Dealing with garbage&lt;/h2>
+&lt;p>So far we didn’t had to deal with the external world yet. Real programs have to watch out for garbage data all the time, be it from database responses, user input, third party services, configuration files, etc.&lt;/p>
+&lt;p>Let us come up with some JSON response from an API representing a list of users:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>[
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;id&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;B4AE6A1B-EE07-4FBE-9588-11F451980A07&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;name&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;John&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;age&amp;#34;&lt;/span>: &lt;span style="color:#ae81ff">32&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;id&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;2711EBA4-098C-44E9-A8A2-518FF07969BF&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;name&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;Mary&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;age&amp;#34;&lt;/span>: &lt;span style="color:#ae81ff">31&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>A naive Scala representation of this data and a parse function look like this:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-scala" data-lang="scala">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">final&lt;/span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">User&lt;/span>&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#66d9ef">val&lt;/span> id&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">,&lt;/span> &lt;span style="color:#66d9ef">val&lt;/span> name&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">,&lt;/span> &lt;span style="color:#66d9ef">val&lt;/span> age&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Int&lt;/span>&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">object&lt;/span> &lt;span style="color:#a6e22e">User&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">def&lt;/span> fromJson&lt;span style="color:#f92672">(&lt;/span>input&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">)&lt;/span>&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">List&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">User&lt;/span>&lt;span style="color:#f92672">]&lt;/span> &lt;span style="color:#66d9ef">=&lt;/span> &lt;span style="color:#f92672">???&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>User&lt;/code> object can be decoded from a JSON string and passed to the rest of the program. But what about the unhappy path?&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>[
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;id&amp;#34;&lt;/span>: &lt;span style="color:#960050;background-color:#1e0010">“foo”&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;name&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;John&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;age&amp;#34;&lt;/span>: &lt;span style="color:#ae81ff">-1&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Is perfectly legal from a type standpoint but domain wise not what we want. If such a response is carelessly passed into our business logic it will become ticking time bomb. A better encoding would be, using &lt;a href="https://github.com/estatico/scala-newtype">scala-newtype&lt;/a> and &lt;a href="https://github.com/fthomas/refined">refined&lt;/a>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-scala" data-lang="scala">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@newtype&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">final&lt;/span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">UserId&lt;/span>&lt;span style="color:#f92672">(&lt;/span>value&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">UUID&lt;/span>&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@newtype&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">final&lt;/span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Name&lt;/span>&lt;span style="color:#f92672">(&lt;/span>value&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span> &lt;span style="color:#66d9ef">Refined&lt;/span> &lt;span style="color:#66d9ef">NonEmpty&lt;/span>&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@newtype&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">final&lt;/span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Age&lt;/span>&lt;span style="color:#f92672">(&lt;/span>value&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Int&lt;/span> &lt;span style="color:#66d9ef">Refined&lt;/span> &lt;span style="color:#66d9ef">Positive&lt;/span>&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#66d9ef">Users&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">NonEmptyList&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">User&lt;/span>&lt;span style="color:#f92672">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">final&lt;/span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">User&lt;/span>&lt;span style="color:#f92672">(&lt;/span>id&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">UserId&lt;/span>&lt;span style="color:#f92672">,&lt;/span> name&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Name&lt;/span>&lt;span style="color:#f92672">,&lt;/span> age&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Age&lt;/span>&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">object&lt;/span> &lt;span style="color:#a6e22e">User&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">def&lt;/span> fromJson&lt;span style="color:#f92672">(&lt;/span>input&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">)&lt;/span>&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Either&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">DecodeException&lt;/span>, &lt;span style="color:#66d9ef">Users&lt;/span>&lt;span style="color:#f92672">]&lt;/span> &lt;span style="color:#66d9ef">=&lt;/span> &lt;span style="color:#f92672">???&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Now it is &lt;strong>impossible&lt;/strong> to create illegal state since we would not be able to satisfy the compiler, illegal state has become inexpressible. We are forced instead to handle invalid input at the most outer layer or “edge” of our program where the raw data comes in.&lt;/p>
+&lt;p>&lt;strong>tl; dr&lt;/strong>: always use domain primitives and never language primitives in your business logic.&lt;/p>
+&lt;h2 id="bonus-round">Bonus round&lt;/h2>
+&lt;p>We won’t talk about them now, but domain modeling has additional advantages:&lt;/p>
+&lt;ul>
+&lt;li>reduced cognitive overhead for developers.&lt;/li>
+&lt;li>better auto-complete suggestions (where supported by your editor or IDE).&lt;/li>
+&lt;li>no ambiguity means less room for bugs which leads to fewer defects.&lt;/li>
+&lt;li>reduced API surface decreases the chance of vulnerabilities like SQL injections and XSS.&lt;/li>
+&lt;/ul>
+&lt;h2 id="conclusion">Conclusion&lt;/h2>
+&lt;p>A proper domain model built from domain primitives forces us, developers, to do the right thing.&lt;/p>
+&lt;p>In the end we shall make &lt;del>thoughtcrime&lt;/del> illegal state literally impossible!&lt;/p></description></item><item><title>Hello Ocean</title><link>https://www.thefever.dev/posts/hello-ocean/</link><pubDate>Mon, 28 Feb 2022 10:05:40 +0100</pubDate><guid>https://www.thefever.dev/posts/hello-ocean/</guid><description>&lt;p>Obligatory first post.&lt;/p>
 &lt;p>You are reading the blog of The Fever, the development team of TheSting.&lt;/p>
 &lt;p>We are responsible for (among other things) the e-commerce platform and related
 websites of TheSting companies.&lt;/p>
